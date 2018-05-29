@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`brotli middleware response body matches snapshot when supported 1`] = `""`;
+
+exports[`brotli middleware response body matches snapshot when unsupported 1`] = `undefined`;
+
+exports[`brotli middleware response headers match snapshot when supported 1`] = `
+Object {
+  "content-encoding": Array [
+    Object {
+      "key": "Content-Encoding",
+      "value": "br",
+    },
+  ],
+}
+`;
+
+exports[`brotli middleware response headers match snapshot when unsupported 1`] = `Object {}`;

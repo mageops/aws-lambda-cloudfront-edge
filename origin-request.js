@@ -16,8 +16,8 @@ const middleware = ware()
  */
 exports.handler = (event, context, callback) => {
     const request = event.Records[0].cf.request;
-    const response = event.Records[0].cf.response;
-    console.log(typeof response.body, response.body);
+    const response = {};
+
     middleware.run(request, response, (error, request, response) => {
         callback(error, response);
     });
