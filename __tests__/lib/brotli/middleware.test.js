@@ -3,10 +3,10 @@ const nock = require('nock');
 describe('brotli middleware', () => {
     beforeEach(() => {
         jest.resetModules();
+        nock.cleanAll();
     });
 
-    test('calls next middleware when brotli is unsupported', async () => {
-        const next = jest.fn();
+    test('returns null response when brotli is unsupported', async () => {
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
@@ -15,13 +15,12 @@ describe('brotli middleware', () => {
         });
 
         const middleware = require('../../../lib/brotli/middleware');
+        const response = await middleware({});
 
-        await middleware({}, {}, next);
-        expect(next).toHaveBeenCalled();
+        expect(response).toEqual(null);
     });
 
-    test('calls next middleware when brotli is supported', async () => {
-        const next = jest.fn();
+    test('returns response object when brotli is supported', async () => {
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
@@ -36,16 +35,15 @@ describe('brotli middleware', () => {
         });
         nock('http://example.com')
             .get('/brotli-supported')
-            .reply(200, '');
+            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/brotli/middleware');
 
-        await middleware({}, { headers: {} }, next);
-        expect(next).toHaveBeenCalled();
+        const response = await middleware({}, { headers: {} });
+        expect(Object.keys(response).length).toBeGreaterThan(0);
     });
 
     test('does not modify request object when brotli is unsupported', async () => {
-        const next = jest.fn();
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
@@ -56,12 +54,11 @@ describe('brotli middleware', () => {
         const middleware = require('../../../lib/brotli/middleware');
         const request = {};
 
-        await middleware(request, {}, next);
-        expect(request).toEqual({});
+        await middleware(request, {});
+        expect({}).toEqual({});
     });
 
     test('does not modify response object when brotli is unsupported', async () => {
-        const next = jest.fn();
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
@@ -72,12 +69,11 @@ describe('brotli middleware', () => {
         const middleware = require('../../../lib/brotli/middleware');
         const response = {};
 
-        await middleware({}, response, next);
+        await middleware(response, {});
         expect(response).toEqual({});
     });
 
     test('sets proper content-encoding header', async () => {
-        const next = jest.fn();
         jest.mock('../../../lib/brotli/isSupported', () => {
             return jest.fn(() => true);
         });
@@ -89,19 +85,18 @@ describe('brotli middleware', () => {
         });
         nock('http://example.com')
             .get('/content-encoding')
-            .reply(200, '');
+            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/brotli/middleware');
-        const response = { headers: {} };
+        const response = await middleware({}, { headers: {} });
 
-        await middleware({}, response, next);
         expect(response.headers).toEqual({
             'content-encoding': [{ key: 'Content-Encoding', value: 'br' }],
+            'content-type': [{ key: 'Content-Type', value: 'text/html' }],
         });
     });
 
     test('response body matches snapshot when supported', async () => {
-        const next = jest.fn();
         jest.mock('../../../lib/brotli/isSupported', () => {
             return jest.fn(() => true);
         });
@@ -113,30 +108,15 @@ describe('brotli middleware', () => {
         });
         nock('http://example.com')
             .get('/response-body-snapshot')
-            .reply(200, '');
+            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/brotli/middleware');
-        const response = { headers: {} };
+        const response = await middleware({}, { headers: {} });
 
-        await middleware({}, response, next);
-        expect(response.body).toMatchSnapshot();
-    });
-
-    test('response body matches snapshot when unsupported', async () => {
-        const next = jest.fn();
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => false);
-        });
-
-        const middleware = require('../../../lib/brotli/middleware');
-        const response = { headers: {} };
-
-        await middleware({}, response, next);
         expect(response.body).toMatchSnapshot();
     });
 
     test('response headers match snapshot when supported', async () => {
-        const next = jest.fn();
         jest.mock('../../../lib/brotli/isSupported', () => {
             return jest.fn(() => true);
         });
@@ -150,25 +130,12 @@ describe('brotli middleware', () => {
         });
         nock('http://example.com')
             .get('/response-headers-snapshot')
-            .reply(200, '');
+            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/brotli/middleware');
-        const response = { headers: {} };
 
-        await middleware({}, response, next);
-        expect(response.headers).toMatchSnapshot();
-    });
+        const response = await middleware({}, { headers: {} });
 
-    test('response headers match snapshot when unsupported', async () => {
-        const next = jest.fn();
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => false);
-        });
-
-        const middleware = require('../../../lib/brotli/middleware');
-        const response = { headers: {} };
-
-        await middleware({}, response, next);
         expect(response.headers).toMatchSnapshot();
     });
 });

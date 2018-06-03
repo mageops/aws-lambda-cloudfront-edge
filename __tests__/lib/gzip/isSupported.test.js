@@ -1,6 +1,10 @@
 const isSupported = require('../../../lib/gzip/isSupported');
 
 describe('gzip isSupported', () => {
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
     test('returns false when no accept-encoding header is present', () => {
         const request = {
             headers: {},

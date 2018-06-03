@@ -1,6 +1,10 @@
 const compress = require('../../../lib/brotli/compress');
 
 describe('brotli compress', () => {
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
     test('returns a promise', () => {
         expect(typeof compress('').then).toBe('function');
     });

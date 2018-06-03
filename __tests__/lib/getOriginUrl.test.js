@@ -1,6 +1,10 @@
 const getOriginUrl = require('../../lib/getOriginUrl');
 
 describe('getOriginUrl', () => {
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
     test('returns URL with proper http protocol', () => {
         const request = {
             origin: {

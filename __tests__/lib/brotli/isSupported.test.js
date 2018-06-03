@@ -1,6 +1,10 @@
 const isSupported = require('../../../lib/brotli/isSupported');
 
 describe('brotli isSupported', () => {
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
     test('returns false when no x-compression header is present', () => {
         const response = {
             headers: {},

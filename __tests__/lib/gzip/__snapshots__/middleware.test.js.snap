@@ -2,8 +2,6 @@
 
 exports[`gzip middleware response body matches snapshot when supported 1`] = `""`;
 
-exports[`gzip middleware response body matches snapshot when unsupported 1`] = `undefined`;
-
 exports[`gzip middleware response headers match snapshot when supported 1`] = `
 Object {
   "content-encoding": Array [
@@ -12,7 +10,11 @@ Object {
       "value": "gzip",
     },
   ],
+  "content-type": Array [
+    Object {
+      "key": "Content-Type",
+      "value": "text/html",
+    },
+  ],
 }
 `;
-
-exports[`gzip middleware response headers match snapshot when unsupported 1`] = `Object {}`;
