@@ -35,11 +35,4 @@ describe('brotli compress', () => {
         const output = await compress(input);
         expect(output).toBeTruthy();
     });
-
-    test('result output is smaller then input', async () => {
-        const input = 'test input to compress';
-        const output = await compress(input).toString();
-
-        expect(output.length).toBeLessThan(input.length);
-    });
 });

@@ -28,10 +28,10 @@ describe('gzip middleware', () => {
             return jest.fn(input => Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/next-gzip-supported');
+            return jest.fn(() => 'http://example.com/response-gzip-supported');
         });
         nock('http://example.com')
-            .get('/next-gzip-supported')
+            .get('/response-gzip-supported')
             .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/gzip/middleware');
