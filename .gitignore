@@ -121,4 +121,5 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/osx,node,windows,visualstudiocode
 
 # Package that is deployed to AWS Lambda
-package.zip
+deploy-package.zip
+coverage

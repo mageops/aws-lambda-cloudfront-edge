@@ -1,6 +1,8 @@
 const nock = require('nock');
 const fs = require('fs');
 const path = require('path');
+const { promisify } = require('util');
+const readFileAsync = promisify(fs.readFile);
 
 describe('imagemin middleware', () => {
     beforeEach(() => {
@@ -31,7 +33,7 @@ describe('imagemin middleware', () => {
                 () => 'http://example.com/imagemin-extension-supported'
             );
         });
-        const input = fs.readFileSync(
+        const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
 
@@ -79,7 +81,7 @@ describe('imagemin middleware', () => {
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/content-encoding');
         });
-        const input = fs.readFileSync(
+        const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
         nock('http://example.com')
@@ -94,6 +96,26 @@ describe('imagemin middleware', () => {
         });
     });
 
+    test('returns response for null argument', async () => {
+        jest.mock('../../../lib/imagemin/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/imagemin/compress', () => {
+            return jest.fn(input => Buffer.from(input));
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/null-parameter');
+        });
+        nock('http://example.com')
+            .get('/null-parameter')
+            .reply(200, '', { 'content-type': 'text/html' });
+
+        const middleware = require('../../../lib/imagemin/middleware');
+        const response = await middleware({}, null);
+
+        expect(response).not.toEqual(null);
+    });
+
     test('response body matches snapshot when supported', async () => {
         jest.mock('../../../lib/imagemin/isSupported', () => {
             return jest.fn(() => true);
@@ -104,7 +126,7 @@ describe('imagemin middleware', () => {
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/response-body-snapshot');
         });
-        const input = fs.readFileSync(
+        const input = await readFileAsync(
             path.resolve(__dirname, './image-png.png')
         );
         nock('http://example.com')
@@ -129,7 +151,7 @@ describe('imagemin middleware', () => {
                 () => 'http://example.com/response-headers-snapshot'
             );
         });
-        const input = fs.readFileSync(
+        const input = await readFileAsync(
             path.resolve(__dirname, './image-png.png')
         );
         nock('http://example.com')
@@ -140,5 +162,72 @@ describe('imagemin middleware', () => {
         const response = await middleware({}, { headers: {} });
 
         expect(response.headers).toMatchSnapshot();
+    });
+
+    test('rejects promise when server errors', async () => {
+        jest.mock('../../../lib/imagemin/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/server-error');
+        });
+
+        nock('http://example.com')
+            .get('/server-error')
+            .reply(503, '');
+
+        const middleware = require('../../../lib/imagemin/middleware');
+
+        expect(middleware({}, { headers: {} })).rejects.toThrow();
+    });
+
+    test('rejects promise when compression errors', async () => {
+        jest.mock('../../../lib/imagemin/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/imagemin/compress', () => {
+            return jest.fn(() => {
+                throw new Error();
+            });
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/compression-error');
+        });
+
+        nock('http://example.com')
+            .get('/compression-error')
+            .reply(200, '', { 'content-type': 'image/png' });
+
+        const middleware = require('../../../lib/imagemin/middleware');
+
+        expect(middleware({}, { headers: {} })).rejects.toThrow();
+    });
+
+    test('forwards origin response headers when supported', async () => {
+        jest.mock('../../../lib/imagemin/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/imagemin/compress', () => {
+            return jest.fn(input => input);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(
+                () => 'http://example.com/response-headers-supported'
+            );
+        });
+        const input = await readFileAsync(
+            path.resolve(__dirname, './image-png.png')
+        );
+        nock('http://example.com')
+            .get('/response-headers-supported')
+            .reply(200, input, {
+                'content-type': 'text/html',
+                'access-control-allow-origin': '*',
+            });
+
+        const middleware = require('../../../lib/imagemin/middleware');
+        const response = await middleware({}, { headers: {} });
+
+        expect(response.headers['access-control-allow-origin']).toBeTruthy();
     });
 });

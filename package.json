@@ -11,11 +11,10 @@
     "scripts": {
         "reinstall": "rm -rf node_modules && yarn",
         "reinstall-prod": "rm -rf node_modules && yarn --prod",
-        "recompile":
-            "docker run --rm -v \"$PWD\":/var/task lambci/lambda:build-nodejs8.10",
-        "zip": "zip -r deploy-package.zip . -x \"__tests__**\"",
-        "create-package":
-            "yarn reinstall-prod && yarn recompile && yarn zip && yarn reinstall",
+        "recompile": "docker run --rm -v \"$PWD\":/var/task lambda",
+        "zip": "zip -qr deploy-package.zip . -x \"__tests__**\" --display-globaldots",
+        "remove-old": "rm deploy-package.zip",
+        "create-package": "yarn reinstall-prod && yarn recompile && yarn remove-old && yarn zip && yarn reinstall",
         "precommit": "lint-staged",
         "test": "jest"
     },
@@ -25,10 +24,10 @@
         "eslint-plugin-node": "^6.0.1",
         "eslint-plugin-prettier": "^2.6.0",
         "husky": "^0.14.3",
-        "jest": "^22.4.4",
-        "lint-staged": "^7.1.1",
-        "nock": "^9.2.6",
-        "prettier": "^1.12.1"
+        "jest": "^23.1.0",
+        "lint-staged": "^7.1.3",
+        "nock": "^9.3.2",
+        "prettier": "^1.13.4"
     },
     "lint-staged": {
         "*.js": [
@@ -36,7 +35,9 @@
             "eslint --fix",
             "git add"
         ],
-        "yarn.lock": ["git rm --cached"]
+        "yarn.lock": [
+            "git rm --cached"
+        ]
     },
     "prettier": {
         "trailingComma": "es5",
@@ -44,7 +45,9 @@
         "tabWidth": 4
     },
     "eslintConfig": {
-        "plugins": ["node"],
+        "plugins": [
+            "node"
+        ],
         "extends": [
             "eslint:recommended",
             "plugin:prettier/recommended",
@@ -68,6 +71,7 @@
         "iltorb": "^2.3.2",
         "imagemin": "^5.3.1",
         "imagemin-gifsicle": "^5.2.0",
+        "imagemin-jpegtran": "^5.0.2",
         "imagemin-optipng": "^5.2.1",
         "imagemin-svgo": "^6.0.0",
         "imagemin-webp": "^4.1.0"

@@ -1,17 +1,20 @@
 'use strict';
 
+const logger = require('./lib/logger');
+
 const brotli = require('./lib/brotli/middleware');
 const gzip = require('./lib/gzip/middleware');
-// const imagemin = require('./lib/imagemin/middleware');
+const imagemin = require('./lib/imagemin/middleware');
+const webp = require('./lib/webp/middleware');
 
-const middleware = [gzip, brotli];
+const middleware = [gzip, brotli, webp, imagemin];
 
 /**
  * Origin Request CloudFront event handler.
  */
 exports.handler = async (event, context, callback) => {
     const request = event.Records[0].cf.request;
-    console.log(JSON.stringify(request));
+    logger.log(JSON.stringify(request));
     let response = null;
 
     try {
@@ -22,15 +25,11 @@ exports.handler = async (event, context, callback) => {
             }
         }
     } catch (error) {
-        console.error(error);
-        response = {
-            body: '',
-            status: error.statusCode,
-            statusDescription: error.statusMessage,
-        };
+        logger.error(error);
+        response = null;
     }
 
-    // Bypass lambda if it didn't generate any response by passing request object.
+    // Bypass lambda if no response was generated or error occurred.
     if (response === null) {
         response = request;
     }

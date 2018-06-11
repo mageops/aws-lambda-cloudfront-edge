@@ -13,6 +13,26 @@ describe('gzip isSupported', () => {
         expect(isSupported(request)).toBe(false);
     });
 
+    test('returns false when no headers are present', () => {
+        const request = {
+            uri: 'test.js',
+        };
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false when no URI is present', () => {
+        const request = {
+            headers: {
+                'accept-encoding': [{ value: 'gzip' }],
+            },
+        };
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false for empty request', () => {
+        expect(isSupported({})).toBe(false);
+    });
+
     test('returns false when accept-encoding does not contain gzip', () => {
         const request = {
             headers: {

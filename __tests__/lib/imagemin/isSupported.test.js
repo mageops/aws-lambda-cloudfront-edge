@@ -6,44 +6,48 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns false when file extension is not supported', () => {
-        const response = {
+        const request = {
             uri: 'test.js',
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false for empty response', () => {
+        expect(isSupported({})).toBe(false);
     });
 
     test('returns true for png files', () => {
-        const response = {
+        const request = {
             uri: 'test.png',
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for jpg files', () => {
-        const response = {
+        const request = {
             uri: 'test.jpg',
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for jpeg files', () => {
-        const response = {
+        const request = {
             uri: 'test.jpeg',
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for gif files', () => {
-        const response = {
+        const request = {
             uri: 'test.gif',
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for svg files', () => {
-        const response = {
+        const request = {
             uri: 'test.svg',
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 });

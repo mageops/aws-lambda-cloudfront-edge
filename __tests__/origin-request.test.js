@@ -196,89 +196,7 @@ describe('origin-request handler', () => {
         });
     });
 
-    test('returns proper response when resource is not found', async () => {
-        const event = {
-            Records: [
-                {
-                    cf: {
-                        request: {
-                            headers: {
-                                'accept-encoding': [
-                                    {
-                                        value: 'gzip',
-                                        key: 'Accept-Encoding',
-                                    },
-                                ],
-                            },
-                            origin: {
-                                custom: {
-                                    protocol: 'http',
-                                    domainName: 'example.com',
-                                    path: '',
-                                },
-                            },
-                            uri: '/not-found.js',
-                        },
-                    },
-                },
-            ],
-        };
-        nock('http://example.com')
-            .get('/not-found.js')
-            .reply(404, '', { 'content-type': 'text/javascript' });
-
-        const callback = jest.fn();
-
-        await originRequest.handler(event, null, callback);
-
-        expect(callback).toHaveBeenCalledWith(null, {
-            status: 404,
-            statusDescription: 'Not Found',
-        });
-    });
-
-    test('returns proper response when server errors', async () => {
-        const event = {
-            Records: [
-                {
-                    cf: {
-                        request: {
-                            headers: {
-                                'accept-encoding': [
-                                    {
-                                        value: 'gzip',
-                                        key: 'Accept-Encoding',
-                                    },
-                                ],
-                            },
-                            origin: {
-                                custom: {
-                                    protocol: 'http',
-                                    domainName: 'example.com',
-                                    path: '',
-                                },
-                            },
-                            uri: '/server-error.js',
-                        },
-                    },
-                },
-            ],
-        };
-        nock('http://example.com')
-            .get('/server-error.js')
-            .reply(503, '', { 'content-type': 'text/javascript' });
-
-        const callback = jest.fn();
-
-        await originRequest.handler(event, null, callback);
-
-        expect(callback).toHaveBeenCalledWith(null, {
-            status: 503,
-            statusDescription: 'Service Unavailable',
-        });
-    });
-
-    test('calls callback with request object when file extension is not supported', async () => {
+    test('calls callback with request when resource is not found', async () => {
         const request = {
             headers: {
                 'accept-encoding': [
@@ -295,7 +213,87 @@ describe('origin-request handler', () => {
                     path: '',
                 },
             },
-            uri: '/server-error.png',
+            uri: '/not-found.js',
+        };
+
+        const event = {
+            Records: [
+                {
+                    cf: {
+                        request,
+                    },
+                },
+            ],
+        };
+        nock('http://example.com')
+            .get('/not-found.js')
+            .reply(404, '', { 'content-type': 'text/javascript' });
+
+        const callback = jest.fn();
+
+        await originRequest.handler(event, null, callback);
+
+        expect(callback).toHaveBeenCalledWith(null, request);
+    });
+
+    test('returns calls callback with request when server errors', async () => {
+        const request = {
+            headers: {
+                'accept-encoding': [
+                    {
+                        value: 'gzip',
+                        key: 'Accept-Encoding',
+                    },
+                ],
+            },
+            origin: {
+                custom: {
+                    protocol: 'http',
+                    domainName: 'example.com',
+                    path: '',
+                },
+            },
+            uri: '/server-error.js',
+        };
+
+        const event = {
+            Records: [
+                {
+                    cf: {
+                        request,
+                    },
+                },
+            ],
+        };
+        nock('http://example.com')
+            .get('/server-error.js')
+            .reply(503, '', { 'content-type': 'text/javascript' });
+
+        const callback = jest.fn();
+
+        await originRequest.handler(event, null, callback);
+
+        expect(callback).toHaveBeenCalledWith(null, request);
+    });
+
+    test('calls callback with request when file extension is not supported', async () => {
+        const request = {
+            headers: {
+                'accept-encoding': [
+                    {
+                        value: 'gzip',
+                        key: 'Accept-Encoding',
+                    },
+                ],
+            },
+            origin: {
+                custom: {
+                    protocol: 'http',
+                    domainName: 'example.com',
+                    path: '',
+                },
+            },
+            uri: '/not-supported.exe',
         };
         const event = {
             Records: [

@@ -6,80 +6,98 @@ describe('webp isSupported', () => {
     });
 
     test('returns false when file extension is not supported', () => {
-        const response = {
+        const request = {
             uri: 'test.js',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false when URI is missing', () => {
+        const request = {
+            headers: {},
+        };
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false when headers is missing', () => {
+        const request = {
+            uri: 'test.jpg',
+        };
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false for empty request object', () => {
+        expect(isSupported({})).toBe(false);
     });
 
     test('returns false when x-webp header is missing', () => {
-        const response = {
+        const request = {
             uri: 'test.jpg',
             headers: {},
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
     });
 
     test('returns false when x-webp header has a wrong value', () => {
-        const response = {
+        const request = {
             uri: 'test.jpg',
             headers: {
                 'x-webp': [{ value: '0' }],
             },
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
     });
 
     test('returns true for png files', () => {
-        const response = {
+        const request = {
             uri: 'test.png',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for jpg files', () => {
-        const response = {
+        const request = {
             uri: 'test.jpg',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns true for jpeg files', () => {
-        const response = {
+        const request = {
             uri: 'test.jpeg',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(true);
+        expect(isSupported(request)).toBe(true);
     });
 
     test('returns false for gif files', () => {
-        const response = {
+        const request = {
             uri: 'test.gif',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
     });
 
     test('returns false for svg files', () => {
-        const response = {
+        const request = {
             uri: 'test.svg',
             headers: {
                 'x-webp': [{ value: '1' }],
             },
         };
-        expect(isSupported(response)).toBe(false);
+        expect(isSupported(request)).toBe(false);
     });
 });
