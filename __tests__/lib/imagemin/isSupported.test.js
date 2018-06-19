@@ -44,10 +44,10 @@ describe('imagemin isSupported', () => {
         expect(isSupported(request)).toBe(true);
     });
 
-    test('returns true for svg files', () => {
+    test('returns false for svg files', () => {
         const request = {
             uri: 'test.svg',
         };
-        expect(isSupported(request)).toBe(true);
+        expect(isSupported(request)).toBe(false);
     });
 });

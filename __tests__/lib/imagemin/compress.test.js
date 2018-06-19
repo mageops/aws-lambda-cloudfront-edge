@@ -57,13 +57,13 @@ describe('imagemin compress', () => {
         expect(output.length).toBeLessThan(input.length);
     });
 
-    test('result output is smaller then input for svg', async () => {
+    test('result output is the same size as input for svg', async () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-svg.svg')
         );
         const compress = require('../../../lib/imagemin/compress');
         const output = await compress(input);
 
-        expect(output.length).toBeLessThan(input.length);
+        expect(output.length).toBe(input.length);
     });
 });
