@@ -5,9 +5,6 @@
     "main": "index.js",
     "author": "creativestyle",
     "license": "MIT",
-    "engines": {
-        "node": "8.10.0"
-    },
     "scripts": {
         "build-docker": "docker build -t creativeshop-lambda .",
         "reinstall": "rm -rf node_modules && yarn",
@@ -56,7 +53,10 @@
         },
         "rules": {
             "no-console": 0,
-            "node/no-unpublished-require": 0
+            "node/no-unpublished-require": 0,
+            "node/no-unsupported-features": ["error", {
+                "version": 8.10
+            }]
         },
         "parserOptions": {
             "ecmaFeatures": {
