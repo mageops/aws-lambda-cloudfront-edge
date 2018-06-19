@@ -1,6 +1,6 @@
 {
     "name": "creativeshop-lambda",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Lambda used for creativeshop.",
     "main": "index.js",
     "author": "creativestyle",
@@ -9,9 +9,10 @@
         "node": "8.10.0"
     },
     "scripts": {
+        "build-docker": "docker build -t creativeshop-lambda .",
         "reinstall": "rm -rf node_modules && yarn",
         "reinstall-prod": "rm -rf node_modules && yarn --prod",
-        "recompile": "docker run --rm -v \"$PWD\":/var/task lambda",
+        "recompile": "docker run --rm -v \"$PWD\":/var/task creativeshop-lambda",
         "zip": "zip -qr deploy-package.zip . -x \"__tests__**\" \".git**\" --display-globaldots",
         "remove-old": "rm deploy-package.zip || true",
         "create-package": "yarn reinstall-prod && yarn recompile && yarn remove-old && yarn zip && yarn reinstall",
