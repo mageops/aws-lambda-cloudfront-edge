@@ -92,6 +92,12 @@ describe('webp middleware', () => {
 
         expect(response.headers).toEqual({
             'content-type': [{ key: 'Content-Type', value: 'image/webp' }],
+            'x-orig-size': [
+                {
+                    key: 'X-Orig-Size',
+                    value: 154016,
+                },
+            ],
         });
     });
 

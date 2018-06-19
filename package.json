@@ -55,7 +55,7 @@
             "no-console": 0,
             "node/no-unpublished-require": 0,
             "node/no-unsupported-features": ["error", {
-                "version": 8.10
+                "version": 8.3
             }]
         },
         "parserOptions": {

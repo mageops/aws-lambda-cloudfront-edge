@@ -57,6 +57,7 @@ describe('origin-request handler', () => {
                 'content-type': [
                     { key: 'Content-Type', value: 'text/javascript' },
                 ],
+                'x-orig-size': [{ key: 'X-Orig-Size', value: 0 }],
             },
             status: 200,
             statusDescription: null,
@@ -135,6 +136,7 @@ describe('origin-request handler', () => {
                 'content-type': [
                     { key: 'Content-Type', value: 'text/javascript' },
                 ],
+                'x-orig-size': [{ key: 'X-Orig-Size', value: 0 }],
             },
             status: 200,
             statusDescription: null,
@@ -190,6 +192,7 @@ describe('origin-request handler', () => {
                 'content-type': [
                     { key: 'Content-Type', value: 'text/javascript' },
                 ],
+                'x-orig-size': [{ key: 'X-Orig-Size', value: 0 }],
             },
             status: 200,
             statusDescription: null,

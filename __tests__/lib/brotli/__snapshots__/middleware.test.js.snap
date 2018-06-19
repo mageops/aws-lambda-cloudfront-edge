@@ -16,5 +16,11 @@ Object {
       "value": "text/html",
     },
   ],
+  "x-orig-size": Array [
+    Object {
+      "key": "X-Orig-Size",
+      "value": 0,
+    },
+  ],
 }
 `;

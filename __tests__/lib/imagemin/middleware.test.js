@@ -47,6 +47,30 @@ describe('imagemin middleware', () => {
         expect(Object.keys(response).length).toBeGreaterThan(0);
     });
 
+    test('returns null response when compressed file is too big', async () => {
+        jest.mock('../../../lib/imagemin/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/imagemin/compress', () => {
+            return jest.fn(input => input);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/imagemin-huge-img');
+        });
+        const input = await readFileAsync(
+            path.resolve(__dirname, './image-jpg-huge.jpg')
+        );
+
+        nock('http://example.com')
+            .get('/imagemin-huge-img')
+            .reply(200, input, { 'content-type': 'image/jpg' });
+
+        const middleware = require('../../../lib/imagemin/middleware');
+        const response = await middleware({}, null);
+
+        expect(response).toBe(null);
+    });
+
     test('does not modify request object when file extension is unsupported', async () => {
         jest.mock('../../../lib/imagemin/isSupported', () => {
             return jest.fn(() => false);
@@ -93,6 +117,12 @@ describe('imagemin middleware', () => {
 
         expect(response.headers).toEqual({
             'content-type': [{ key: 'Content-Type', value: 'image/jpg' }],
+            'x-orig-size': [
+                {
+                    key: 'X-Orig-Size',
+                    value: 154016,
+                },
+            ],
         });
     });
 

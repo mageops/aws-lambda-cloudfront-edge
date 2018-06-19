@@ -81,6 +81,12 @@ describe('brotli middleware', () => {
         expect(response.headers).toEqual({
             'content-encoding': [{ key: 'Content-Encoding', value: 'br' }],
             'content-type': [{ key: 'Content-Type', value: 'text/html' }],
+            'x-orig-size': [
+                {
+                    key: 'X-Orig-Size',
+                    value: 0,
+                },
+            ],
         });
     });
 
