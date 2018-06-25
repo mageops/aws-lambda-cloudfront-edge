@@ -34,5 +34,7 @@ exports.handler = async (event, context, callback) => {
         response = request;
     }
 
+    logger.log(JSON.stringify(response));
+
     callback(null, response);
 };

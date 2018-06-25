@@ -120,7 +120,7 @@ describe('imagemin middleware', () => {
             'x-orig-size': [
                 {
                     key: 'X-Orig-Size',
-                    value: 120452,
+                    value: '120452',
                 },
             ],
         });

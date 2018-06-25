@@ -95,7 +95,7 @@ describe('webp middleware', () => {
             'x-orig-size': [
                 {
                     key: 'X-Orig-Size',
-                    value: 154016,
+                    value: '154016',
                 },
             ],
         });

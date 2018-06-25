@@ -84,7 +84,7 @@ describe('brotli middleware', () => {
             'x-orig-size': [
                 {
                     key: 'X-Orig-Size',
-                    value: 0,
+                    value: '0',
                 },
             ],
         });

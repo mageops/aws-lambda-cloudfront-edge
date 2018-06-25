@@ -13,7 +13,7 @@ Object {
   "x-orig-size": Array [
     Object {
       "key": "X-Orig-Size",
-      "value": 154016,
+      "value": "154016",
     },
   ],
 }
