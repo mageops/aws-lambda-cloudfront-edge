@@ -17,6 +17,12 @@ RUN yum install -y nasm
 
 RUN yum install -y libjpeg-devel libpng-devel libtiff-devel libgif-devel
 
-WORKDIR /var/task
+RUN curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
+RUN curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
 
-CMD ["npm", "rebuild"]
+RUN yum install -y yarn
+
+WORKDIR /var/app-local
+
+CMD rsync --delete -a /var/app/* . --exclude .git --exclude node_modules && rm /var/app/deploy-package.zip && yarn --prod && zip -qr9 /var/app/deploy-package.zip . -x "__tests__*" ".git*" --display-globaldots
+

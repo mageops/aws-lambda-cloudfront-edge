@@ -7,12 +7,7 @@
     "license": "MIT",
     "scripts": {
         "build-docker": "docker build -t creativeshop-lambda .",
-        "reinstall": "rm -rf node_modules && yarn",
-        "reinstall-prod": "rm -rf node_modules && yarn --prod",
-        "recompile": "docker run --rm -v \"$PWD\":/var/task creativeshop-lambda",
-        "zip": "zip -qr deploy-package.zip . -x \"__tests__**\" \".git**\" --display-globaldots",
-        "remove-old": "rm deploy-package.zip || true",
-        "create-package": "yarn reinstall-prod && yarn recompile && yarn remove-old && yarn zip && yarn reinstall",
+        "create-package": "docker run --rm -v \"$PWD\":/var/app creativeshop-lambda",
         "precommit": "lint-staged",
         "test": "jest"
     },
@@ -54,9 +49,12 @@
         "rules": {
             "no-console": 0,
             "node/no-unpublished-require": 0,
-            "node/no-unsupported-features": ["error", {
-                "version": 8.3
-            }]
+            "node/no-unsupported-features": [
+                "error",
+                {
+                    "version": 8.3
+                }
+            ]
         },
         "parserOptions": {
             "ecmaFeatures": {
@@ -69,7 +67,7 @@
         "iltorb": "^2.3.2",
         "imagemin": "^5.3.1",
         "imagemin-gifsicle": "^5.2.0",
-        "imagemin-jpegtran": "^5.0.2",
+        "imagemin-mozjpeg": "^7.0.0",
         "imagemin-optipng": "^5.2.1",
         "imagemin-webp": "^4.1.0",
         "lodash.capitalize": "^4.2.1"
