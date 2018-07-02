@@ -5,9 +5,10 @@ const logger = require('./lib/logger');
 const brotli = require('./lib/brotli/middleware');
 const gzip = require('./lib/gzip/middleware');
 const imagemin = require('./lib/imagemin/middleware');
-const webp = require('./lib/webp/middleware');
+const webpAccept = require('./lib/webp-accept/middleware');
+const webpUrl = require('./lib/webp-url/middleware');
 
-const middleware = [gzip, brotli, webp, imagemin];
+const middleware = [gzip, brotli, webpAccept, webpUrl, imagemin];
 
 /**
  * Origin Request CloudFront event handler.

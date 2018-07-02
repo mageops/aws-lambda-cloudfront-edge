@@ -24,5 +24,5 @@ RUN yum install -y yarn
 
 WORKDIR /var/app-local
 
-CMD rsync --delete -a /var/app/* . --exclude .git --exclude node_modules && rm -f /var/app/deploy-package.zip && yarn --prod && zip -qr9 /var/app/deploy-package.zip . -x "__tests__*" ".git*" --display-globaldots
+CMD rsync --delete -a /var/app/* . --exclude .git --exclude node_modules && rm -f /var/app-local/deploy-package.zip && yarn --prod && zip -qr9 /var/app/deploy-package.zip . -x "__tests__*" ".git*" --display-globaldots
 

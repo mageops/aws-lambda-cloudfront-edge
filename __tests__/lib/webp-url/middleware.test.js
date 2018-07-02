@@ -11,21 +11,21 @@ describe('webp middleware', () => {
     });
 
     test('returns null response when image extension is unsupported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => false);
         });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({});
 
         expect(response).toEqual(null);
     });
 
     test('returns object response when file extension is supported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => input);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -39,18 +39,50 @@ describe('webp middleware', () => {
             .get('/webp-extension-supported')
             .reply(200, input, { 'content-type': 'image/jpg' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, { headers: {} });
 
         expect(Object.keys(response).length).toBeGreaterThan(0);
     });
 
+    test('removes webp from request URI', async () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/webp-url/compress', () => {
+            return jest.fn(input => input);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/webp-extension.jpeg.webp');
+        });
+        const input = await readFileAsync(
+            path.resolve(__dirname, './image-jpg.jpg')
+        );
+
+        nock('http://example.com')
+            .get('/webp-extension.jpeg')
+            .reply(200, input, { 'content-type': 'image/jpg' });
+
+        const middleware = require('../../../lib/webp-url/middleware');
+        const response = await middleware({}, { headers: {} });
+
+        expect(response.headers).toEqual({
+            'content-type': [{ key: 'Content-Type', value: 'image/webp' }],
+            'x-orig-size': [
+                {
+                    key: 'X-Orig-Size',
+                    value: '154016',
+                },
+            ],
+        });
+    });
+
     test('does not modify request object when file extension is unsupported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => false);
         });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const request = {};
         await middleware(request, {});
 
@@ -58,11 +90,11 @@ describe('webp middleware', () => {
     });
 
     test('does not modify response object when file extension is unsupported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => false);
         });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = {};
 
         await middleware({}, response);
@@ -70,10 +102,10 @@ describe('webp middleware', () => {
     });
 
     test('sets proper content-encoding header', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => input);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -87,7 +119,7 @@ describe('webp middleware', () => {
             .get('/content-encoding')
             .reply(200, input, { 'content-type': 'image/jpg' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, { headers: {} });
 
         expect(response.headers).toEqual({
@@ -102,10 +134,10 @@ describe('webp middleware', () => {
     });
 
     test('returns response for null argument', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -115,17 +147,17 @@ describe('webp middleware', () => {
             .get('/null-parameter')
             .reply(200, '', { 'content-type': 'text/html' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, null);
 
         expect(response).not.toEqual(null);
     });
 
     test('response body matches snapshot when supported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => input);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -139,17 +171,17 @@ describe('webp middleware', () => {
             .get('/response-body-snapshot')
             .reply(200, input, { 'content-type': 'image/jpg' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, { headers: {} });
 
         expect(response.body).toMatchSnapshot();
     });
 
     test('response headers match snapshot when supported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => input);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -165,14 +197,14 @@ describe('webp middleware', () => {
             .get('/response-headers-snapshot')
             .reply(200, input, { 'content-type': 'image/jpg' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, { headers: {} });
 
         expect(response.headers).toMatchSnapshot();
     });
 
     test('returns error response when server errors', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -183,16 +215,16 @@ describe('webp middleware', () => {
             .get('/server-error')
             .reply(503, '');
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
 
         expect(middleware({}, { headers: {} })).rejects.toThrow();
     });
 
     test('rejects promise when compression errors', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(() => {
                 throw new Error();
             });
@@ -205,16 +237,16 @@ describe('webp middleware', () => {
             .get('/compression-error')
             .reply(200, '', { 'content-type': 'image/png' });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
 
         expect(middleware({}, { headers: {} })).rejects.toThrow();
     });
 
     test('forwards origin response headers when supported', async () => {
-        jest.mock('../../../lib/webp/isSupported', () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/webp/compress', () => {
+        jest.mock('../../../lib/webp-url/compress', () => {
             return jest.fn(input => input);
         });
         jest.mock('../../../lib/getOriginUrl', () => {
@@ -231,7 +263,7 @@ describe('webp middleware', () => {
                 'access-control-allow-origin': '*',
             });
 
-        const middleware = require('../../../lib/webp/middleware');
+        const middleware = require('../../../lib/webp-url/middleware');
         const response = await middleware({}, { headers: {} });
 
         expect(response.headers['access-control-allow-origin']).toBeTruthy();

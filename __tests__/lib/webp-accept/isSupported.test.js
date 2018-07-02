@@ -1,4 +1,4 @@
-const isSupported = require('../../../lib/webp/isSupported');
+const isSupported = require('../../../lib/webp-accept/isSupported');
 
 describe('webp isSupported', () => {
     beforeEach(() => {

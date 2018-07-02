@@ -19,7 +19,9 @@ describe('gzip compress', () => {
     test('rejects the promise when gzip errors', async () => {
         jest.mock('zlib', () => {
             return {
-                gzip: jest.fn((input, options, callback) => callback('Error')),
+                gzip: jest.fn((input, options, callback) =>
+                    callback(new Error('Error'))
+                ),
             };
         });
 

@@ -12,7 +12,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
 
         expect(typeof compress(input).then).toBe('function');
     });
@@ -21,7 +21,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output instanceof Buffer).toBe(true);
@@ -31,7 +31,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output.length).toBeLessThan(input.length);
@@ -41,7 +41,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-png.png')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output.length).toBeLessThan(input.length);
@@ -51,7 +51,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-gif.gif')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output.length).toBe(input.length);
@@ -61,7 +61,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-jpg.jpg')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output.length).toBeLessThan(input.length);
@@ -71,7 +71,7 @@ describe('webp compress', () => {
         const input = await readFileAsync(
             path.resolve(__dirname, './image-svg.svg')
         );
-        const compress = require('../../../lib/webp/compress');
+        const compress = require('../../../lib/webp-accept/compress');
         const output = await compress(input);
 
         expect(output.length).toBe(input.length);
