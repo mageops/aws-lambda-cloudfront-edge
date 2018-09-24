@@ -15,7 +15,7 @@ const middleware = [gzip, brotli, webpAccept, webpUrl, imagemin];
  */
 exports.handler = async (event, context, callback) => {
     const request = event.Records[0].cf.request;
-    logger.log(JSON.stringify(request));
+
     let response = null;
 
     try {
@@ -34,8 +34,6 @@ exports.handler = async (event, context, callback) => {
     if (response === null) {
         response = request;
     }
-
-    logger.log(JSON.stringify(response));
 
     callback(null, response);
 };
