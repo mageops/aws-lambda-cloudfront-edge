@@ -133,6 +133,43 @@ describe('webp middleware', () => {
         });
     });
 
+    test('passes request headers to origin server', async () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/webp-url/compress', () => {
+            return jest.fn(input => input);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/request-headers-pass');
+        });
+        const input = await readFileAsync(
+            path.resolve(__dirname, './image-jpg.jpg')
+        );
+        nock('http://example.com')
+            .get('/request-headers-pass')
+            .reply(function(uri, requestBody, cb) {
+                expect(this.req.headers['x-test-header']).toBe('test-value');
+
+                cb(null, [200, input, { 'content-type': 'image/jpg' }]);
+            });
+
+        const middleware = require('../../../lib/webp-url/middleware');
+        await middleware(
+            {
+                headers: {
+                    'x-test-header': [
+                        {
+                            value: 'test-value',
+                            key: 'X-Test-Header',
+                        },
+                    ],
+                },
+            },
+            { headers: {} }
+        );
+    });
+
     test('returns response for null argument', async () => {
         jest.mock('../../../lib/webp-url/isSupported', () => {
             return jest.fn(() => true);

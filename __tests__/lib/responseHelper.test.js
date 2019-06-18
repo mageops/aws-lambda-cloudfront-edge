@@ -1,4 +1,8 @@
-const { isError, convertHeaders } = require('../../lib/responseHelper');
+const {
+    isError,
+    headersToLambda,
+    requestToHeaders,
+} = require('../../lib/responseHelper');
 
 describe('response', () => {
     beforeEach(() => {
@@ -43,10 +47,10 @@ describe('response', () => {
         });
     });
 
-    describe('convertHeaders helper', () => {
+    describe('headersToLambda helper', () => {
         test('converts header to lambda convention', () => {
             expect(
-                convertHeaders({ 'access-control-allow-origin': '*' })
+                headersToLambda({ 'access-control-allow-origin': '*' })
             ).toEqual({
                 'access-control-allow-origin': [
                     {
@@ -59,7 +63,7 @@ describe('response', () => {
 
         test('allows CORS headers', () => {
             expect(
-                convertHeaders({
+                headersToLambda({
                     'access-control-allow-headers':
                         'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Host,Origin,Accept',
                     'access-control-allow-methods': 'GET, POST, OPTIONS',
@@ -99,7 +103,7 @@ describe('response', () => {
 
         test('allows caching headers', () => {
             expect(
-                convertHeaders({ 'cache-control': 'max-age=31536000' })
+                headersToLambda({ 'cache-control': 'max-age=31536000' })
             ).toEqual({
                 'cache-control': [
                     {
@@ -111,7 +115,7 @@ describe('response', () => {
         });
 
         test('allows etag header', () => {
-            expect(convertHeaders({ etag: 'W/"5b18fcd0-d37ea"' })).toEqual({
+            expect(headersToLambda({ etag: 'W/"5b18fcd0-d37ea"' })).toEqual({
                 etag: [
                     {
                         key: 'Etag',
@@ -123,7 +127,7 @@ describe('response', () => {
 
         test('allows last-modified header', () => {
             expect(
-                convertHeaders({
+                headersToLambda({
                     'last-modified': 'Thu, 07 Jun 2018 09:37:20 GMT',
                 })
             ).toEqual({
@@ -134,6 +138,23 @@ describe('response', () => {
                     },
                 ],
             });
+        });
+    });
+
+    describe('requestToHeaders helper', () => {
+        test('converts lambda convention to header', () => {
+            expect(
+                requestToHeaders({
+                    headers: {
+                        'access-control-allow-origin': [
+                            {
+                                key: 'Access-Control-Allow-Origin',
+                                value: '*',
+                            },
+                        ],
+                    },
+                })
+            ).toEqual({ 'access-control-allow-origin': '*' });
         });
     });
 });

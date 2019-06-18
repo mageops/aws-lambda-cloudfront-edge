@@ -296,7 +296,7 @@ describe('origin-request handler', () => {
                     path: '',
                 },
             },
-            uri: '/not-supported.exe',
+            uri: '/image.jpg',
         };
         const event = {
             Records: [
