@@ -15,7 +15,7 @@ script: >
     --rm \
     --tty \
     --volume "$(pwd):/var/app" \
-    mageops/aws-lambda-build $LAMBDA_RUNTIME aedge-lambda-deploy-package
+    mageops/aws-lambda-build $LAMBDA_RUNTIME edge-lambda-deploy-package
 
 deploy:
   - provider: releases
