@@ -6,8 +6,7 @@
     "author": "creativestyle",
     "license": "MIT",
     "scripts": {
-        "build-docker": "docker build -t creativeshop-lambda .",
-        "create-package": "docker run --rm -v \"$PWD\":/var/app creativeshop-lambda",
+        "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package",
         "precommit": "lint-staged",
         "test": "jest"
     },
@@ -64,7 +63,7 @@
     },
     "dependencies": {
         "got": "^8.3.1",
-        "iltorb": "^2.3.2",
+        "iltorb": "^2.4.4",
         "imagemin": "^5.3.1",
         "imagemin-gifsicle": "^5.2.0",
         "imagemin-mozjpeg": "^7.0.0",

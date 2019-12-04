@@ -9,16 +9,24 @@
 
 ### Generating deploy package
 
-Because our lambda requires native modules in npm packages e.g. for image optimization, compression etc. we need to rebuild entire `node_modules` on the same operating system that AWS Lambda is running on. Then the complete codebase is zipped into `deploy-package.zip` archive which can be attached in Lambda Management Console.
+Because our lambda requires native modules in npm packages e.g. for image optimization, compression etc. we need to rebuild entire `node_modules` on the same operating system that AWS Lambda is running on. Then the complete codebase is zipped into `edge-lambda-deploy-package.zip` archive which can be attached in Lambda Management Console.
 
-To automatically generate `deploy-package.zip` using docker image:
+To automatically generate `edge-lambda-deploy-package.zip` using docker image:
 
 ```bash
-# Build docker image (only needed to be done once).
-yarn build-docker
-# Create package.
 yarn create-package
 ```
+
+Or enter the command directly:
+
+```bash
+docker run --rm --tty --volume "$(PWD):/var/app" mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package
+```
+
+#### Docker image for building lambdas
+
+The package is built using [mageops/aws-lambda-build](https://hub.docker.com/r/mageops/aws-lambda-build).
+Check the corresponding [GitHub repository](https://github.com/mageops/aws-lambda-build) for more information.
 
 ### Configuring Lambda function
 
@@ -26,7 +34,7 @@ Go to [Lambda Management Console](https://console.aws.amazon.com/lambda/home?reg
 
 **Name:** `originRequest`
 
-**Runtime:** `Node.js 8.10`
+**Runtime:** `Node.js 12.x`
 
 **Role:** `Create new role from template(s)`
 
@@ -41,7 +49,7 @@ You will be redirected to function configuration, there you need to setup the fo
 #### Function Code
 
 1.  Select `Upload a .ZIP` file in `Code entry type` field.
-2.  Upload previously generated `deploy-package.zip`.
+2.  Upload previously generated `edge-lambda-deploy-package.zip`.
 3.  Make sure `Runtime` is set to `Node.js 8.10`.
 4.  Set `Handler` field to `origin-request.handler`.
 
