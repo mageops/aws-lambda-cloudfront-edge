@@ -6,7 +6,7 @@
     "author": "creativestyle",
     "license": "MIT",
     "scripts": {
-        "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package",
+        "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build:nodejs10.x nodejs-yarn edge-lambda-deploy-package",
         "precommit": "lint-staged",
         "test": "jest"
     },

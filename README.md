@@ -22,7 +22,7 @@ yarn create-package
 Or enter the command directly:
 
 ```bash
-docker run --rm --tty --volume "$(pwd):/var/app" mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package
+docker run --rm --tty --volume "$(pwd):/var/app" mageops/aws-lambda-build:nodejs10.x nodejs-yarn edge-lambda-deploy-package
 ```
 
 #### Docker image for building lambdas
