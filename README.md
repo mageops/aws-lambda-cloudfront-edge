@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge.svg?branch=master)](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge)
+
 # Lambda@Edge for creativeshop
 
 ## Requirements
@@ -20,7 +22,7 @@ yarn create-package
 Or enter the command directly:
 
 ```bash
-docker run --rm --tty --volume "$(PWD):/var/app" mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package
+docker run --rm --tty --volume "$(pwd):/var/app" mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package
 ```
 
 #### Docker image for building lambdas
