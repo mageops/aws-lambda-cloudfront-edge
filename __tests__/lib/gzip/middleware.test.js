@@ -25,7 +25,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/response-gzip-supported');
@@ -105,7 +105,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/content-encoding');
@@ -134,7 +134,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/null-parameter');
@@ -154,7 +154,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/response-body-snapshot');
@@ -174,7 +174,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(
@@ -235,7 +235,7 @@ describe('gzip middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/response-headers-forward');

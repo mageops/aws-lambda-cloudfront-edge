@@ -23,7 +23,7 @@ describe('brotli compress', () => {
     });
 
     test('works for Buffer input', async () => {
-        const input = Buffer.from('test input to compress');
+        const input = global.Buffer.from('test input to compress');
 
         const output = await compress(input);
         expect(output).toBeTruthy();

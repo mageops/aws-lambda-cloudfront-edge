@@ -149,7 +149,7 @@ describe('webp middleware', () => {
         nock('http://example.com')
             .get('/request-headers-pass')
             .reply(function(uri, requestBody, cb) {
-                expect(this.req.headers['x-test-header']).toBe('test-value');
+                expect(this.req.headers['accept-encoding']).toBe('image/png');
 
                 cb(null, [200, input, { 'content-type': 'image/jpg' }]);
             });
@@ -158,10 +158,47 @@ describe('webp middleware', () => {
         await middleware(
             {
                 headers: {
-                    'x-test-header': [
+                    'accept-encoding': [
                         {
-                            value: 'test-value',
-                            key: 'X-Test-Header',
+                            value: 'image/png',
+                            key: 'Accept-Encoding',
+                        },
+                    ],
+                },
+            },
+            { headers: {} }
+        );
+    });
+
+    test('preserves host request header to origin server', async () => {
+        jest.mock('../../../lib/webp-url/isSupported', () => {
+            return jest.fn(() => true);
+        });
+        jest.mock('../../../lib/webp-url/compress', () => {
+            return jest.fn(input => input);
+        });
+        jest.mock('../../../lib/getOriginUrl', () => {
+            return jest.fn(() => 'http://example.com/request-headers-host');
+        });
+        const input = await readFileAsync(
+            path.resolve(__dirname, './image-jpg.jpg')
+        );
+        nock('http://example.com')
+            .get('/request-headers-host')
+            .reply(function(uri, requestBody, cb) {
+                expect(this.req.headers['host']).toBe('example.com');
+
+                cb(null, [200, input, { 'content-type': 'image/jpg' }]);
+            });
+
+        const middleware = require('../../../lib/webp-url/middleware');
+        await middleware(
+            {
+                headers: {
+                    host: [
+                        {
+                            value: 'localhost',
+                            key: 'Host',
                         },
                     ],
                 },
@@ -175,7 +212,7 @@ describe('webp middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/webp-url/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/null-parameter');

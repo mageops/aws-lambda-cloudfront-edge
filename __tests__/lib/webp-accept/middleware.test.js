@@ -106,7 +106,7 @@ describe('webp middleware', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/webp-accept/compress', () => {
-            return jest.fn(input => Buffer.from(input));
+            return jest.fn(input => global.Buffer.from(input));
         });
         jest.mock('../../../lib/getOriginUrl', () => {
             return jest.fn(() => 'http://example.com/null-parameter');

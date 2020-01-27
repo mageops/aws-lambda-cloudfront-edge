@@ -60,7 +60,7 @@ describe('origin-request handler', () => {
                 'x-orig-size': [{ key: 'X-Orig-Size', value: '0' }],
             },
             status: 200,
-            statusDescription: null,
+            statusDescription: 'OK',
         });
     });
 
@@ -139,7 +139,7 @@ describe('origin-request handler', () => {
                 'x-orig-size': [{ key: 'X-Orig-Size', value: '0' }],
             },
             status: 200,
-            statusDescription: null,
+            statusDescription: 'OK',
         });
     });
 
@@ -195,7 +195,7 @@ describe('origin-request handler', () => {
                 'x-orig-size': [{ key: 'X-Orig-Size', value: '0' }],
             },
             status: 200,
-            statusDescription: null,
+            statusDescription: 'OK',
         });
     });
 
