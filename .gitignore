@@ -117,9 +117,12 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-
 # End of https://www.gitignore.io/api/osx,node,windows,visualstudiocode
 
-# Package that is deployed to AWS Lambda
-deploy-package.zip
 coverage
+
+# Package that is deployed to AWS Lambda
+*-deploy-package*.zip
+
+# This should go only into the deploy package, not repo
+lib/*.so
