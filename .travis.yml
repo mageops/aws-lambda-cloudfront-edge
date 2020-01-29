@@ -1,5 +1,8 @@
 os: linux
-language: generic
+language: node_js
+
+node_js:
+  - 10
 
 services:
   - docker
@@ -7,16 +10,24 @@ services:
 before_install:
   # Cloudfront edge lambdas support nodejs up to 10.x
   - docker pull mageops/aws-lambda-build:nodejs10.x
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version version-number
+  - export PATH="$HOME/.yarn/bin:$PATH"
 
 env:
   - LAMBDA_RUNTIME=nodejs-yarn
 
-script: >
-  docker run \
-    --rm \
-    --tty \
-    --volume "$(pwd):/var/app" \
-    mageops/aws-lambda-build:nodejs10.x $LAMBDA_RUNTIME edge-lambda-deploy-package
+jobs:
+  include:
+    - stage: test
+      script: yarn && yarn test && rm -rf node_modules
+
+    - stage: build
+      script: >
+        docker run \
+          --rm \
+          --tty \
+          --volume "$(pwd):/var/app" \
+          mageops/aws-lambda-build:nodejs10.x $LAMBDA_RUNTIME edge-lambda-deploy-package
 
 deploy:
   - provider: releases

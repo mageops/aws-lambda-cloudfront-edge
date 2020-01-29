@@ -7,9 +7,17 @@
 -   Using AWS CloudFront as a CDN server.
 -   Docker and node@10.x for development.
 
+
 ## Setting up
 
-### Generating deploy package
+### Use prebuilt deploy packages
+
+If you don't need to modify the code you can use the prebuilt deploy packages
+provided as _assets_ with each [GitHub release](https://github.com/mageops/aws-lambda-cloudfront-edge/releases).
+
+They are built automatically using [Travis CI](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge).
+
+### Build lambda deploy package (optional)
 
 Because our lambda requires native modules in npm packages e.g. for image optimization, compression etc. we need to rebuild entire `node_modules` on the same operating system that AWS Lambda is running on. Then the complete codebase is zipped into `edge-lambda-deploy-package.zip` archive which can be attached in Lambda Management Console.
 
@@ -80,3 +88,5 @@ You will be redirected to function configuration, there you need to setup the fo
 10. Confirm by clicking the `Add` button.
 11. Hit `Save` button at the top-right.
 12. Wait for CloudFront to apply the changes(usually a minute or two).
+
+
