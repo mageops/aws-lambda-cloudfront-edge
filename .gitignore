@@ -125,4 +125,4 @@ coverage
 *-deploy-package*.zip
 
 # This should go only into the deploy package, not repo
-lib/*.so
+lib/*.so*

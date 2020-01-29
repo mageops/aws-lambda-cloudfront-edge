@@ -5,7 +5,7 @@
 ## Requirements
 
 -   Using AWS CloudFront as a CDN server.
--   Docker and node@8.10.0 for development.
+-   Docker and node@10.x for development.
 
 ## Setting up
 
@@ -25,6 +25,12 @@ Or enter the command directly:
 docker run --rm --tty --volume "$(pwd):/var/app" mageops/aws-lambda-build:nodejs10.x nodejs-yarn edge-lambda-deploy-package
 ```
 
+**NOTE:** _Even though lambda's runtime should be based on Amazon Linux 2 which has `libjpeg-turbo`
+included by default, this library seems to be missing. The custom build hook installs appropriate
+so files into the `lib/` subdirectory. It's possible that Lambda@Edge still uses
+Amazon Linux 1 as the system runtime, what is not surprising given that this specific lambda
+type does not support node12.x in contrast to "standard ones"._
+
 #### Docker image for building lambdas
 
 The package is built using [mageops/aws-lambda-build](https://hub.docker.com/r/mageops/aws-lambda-build).
@@ -36,7 +42,7 @@ Go to [Lambda Management Console](https://console.aws.amazon.com/lambda/home?reg
 
 **Name:** `originRequest`
 
-**Runtime:** `Node.js 12.x`
+**Runtime:** `Node.js 10.x`
 
 **Role:** `Create new role from template(s)`
 
