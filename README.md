@@ -15,7 +15,10 @@
 If you don't need to modify the code you can use the prebuilt deploy packages
 provided as _assets_ with each [GitHub release](https://github.com/mageops/aws-lambda-cloudfront-edge/releases).
 
-They are built automatically using [Travis CI](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge).
+They are built automatically using [Travis CI](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge) <sup>*</sup>.
+
+<sup>*</sup> Currently running tests on build is disabled because they do exact response body comparison
+which is different between Linux and MacOS.
 
 ### Build lambda deploy package (optional)
 

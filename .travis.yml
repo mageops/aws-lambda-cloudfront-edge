@@ -18,9 +18,8 @@ env:
 
 jobs:
   include:
-    - stage: test
-      script: yarn && yarn test && rm -rf node_modules
-
+    # - stage: test
+    #   script: yarn && yarn test && rm -rf node_modules
     - stage: build
       script: >
         docker run \
