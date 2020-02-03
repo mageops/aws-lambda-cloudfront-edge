@@ -9,11 +9,14 @@
 yum -y install \
   libjpeg-turbo \
   libpng \
-  libtiff
+  libtiff \
+  jbigkit-libs
 
 mkdir -pv "${LAMBDA_SHARED_LIB_DIR}"
 
-cp -v /usr/lib64/libjpeg.so* \
+cp --verbose --no-dereference \
+  /usr/lib64/libjpeg.so* \
   /usr/lib64/libpng*.so* \
   /usr/lib64/libtiff*.so* \
-  "${LAMBDA_SHARED_LIB_DIR}"
+  /usr/lib64/libjbig*.so* \
+    "${LAMBDA_SHARED_LIB_DIR}"
