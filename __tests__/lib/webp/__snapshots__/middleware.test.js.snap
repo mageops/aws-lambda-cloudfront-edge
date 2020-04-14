@@ -10,11 +10,5 @@ Object {
       "value": "image/webp",
     },
   ],
-  "x-orig-size": Array [
-    Object {
-      "key": "X-Orig-Size",
-      "value": "154016",
-    },
-  ],
 }
 `;

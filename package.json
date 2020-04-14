@@ -5,8 +5,11 @@
     "main": "index.js",
     "author": "creativestyle",
     "license": "MIT",
+    "engines": {
+        "node": ">=10.0.0"
+    },
     "scripts": {
-        "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build:nodejs10.x nodejs-yarn edge-lambda-deploy-package",
+        "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package",
         "precommit": "lint-staged",
         "test": "jest"
     },
@@ -18,8 +21,8 @@
         "husky": "^4.2.1",
         "jest": "^25.1.0",
         "lint-staged": "^10.0.3",
-        "nock": "^11.7.2",
-        "prettier": "^1.19.1"
+        "nock": "^12.0.3",
+        "prettier": "^2.0.4"
     },
     "lint-staged": {
         "*.js": [
@@ -51,7 +54,7 @@
             "node/no-unsupported-features": [
                 "error",
                 {
-                    "version": 8.3
+                    "version": 10
                 }
             ]
         },
@@ -62,13 +65,16 @@
         }
     },
     "dependencies": {
+        "@types/jest": "^25.2.1",
         "got": "^10.3.0",
-        "iltorb": "^2.4.4",
+        "gzip-size": "^5.1.1",
         "imagemin": "^7.0.1",
         "imagemin-gifsicle": "^7.0.0",
         "imagemin-mozjpeg": "^8.0.0",
         "imagemin-pngquant": "^8.0.0",
         "imagemin-webp": "^5.1.0",
-        "lodash.capitalize": "^4.2.1"
+        "lodash.capitalize": "^4.2.1",
+        "pretty-size": "^2.0.0",
+        "terser": "^4.6.11"
     }
 }

@@ -10,11 +10,5 @@ Object {
       "value": "image/png",
     },
   ],
-  "x-orig-size": Array [
-    Object {
-      "key": "X-Orig-Size",
-      "value": "295787",
-    },
-  ],
 }
 `;

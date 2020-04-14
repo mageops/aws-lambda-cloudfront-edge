@@ -5,7 +5,7 @@ describe('brotli isSupported', () => {
         jest.resetModules();
     });
 
-    test('returns false when no x-compression header is present', () => {
+    test('returns false when no accept-encoding header is present', () => {
         const request = {
             headers: {},
             uri: 'test.js',
@@ -23,7 +23,7 @@ describe('brotli isSupported', () => {
     test('returns false when URI is missing', () => {
         const request = {
             headers: {
-                'x-compression': [{ value: 'deflate' }],
+                'accept-encoding': [{ value: 'deflate' }],
             },
         };
         expect(isSupported(request)).toBe(false);
@@ -33,20 +33,20 @@ describe('brotli isSupported', () => {
         expect(isSupported({})).toBe(false);
     });
 
-    test('returns false when x-compression does not contain br', () => {
+    test('returns false when accept-encoding does not contain br', () => {
         const request = {
             headers: {
-                'x-compression': [{ value: 'deflate' }],
+                'accept-encoding': [{ value: 'deflate' }],
             },
             uri: 'test.js',
         };
         expect(isSupported(request)).toBe(false);
     });
 
-    test('returns true when x-compression contains br and file extension is supported', () => {
+    test('returns true when accept-encoding contains br and file extension is supported', () => {
         const request = {
             headers: {
-                'x-compression': [
+                'accept-encoding': [
                     { value: 'br' },
                     { value: 'gzip' },
                     { value: 'deflate' },
@@ -57,13 +57,23 @@ describe('brotli isSupported', () => {
         expect(isSupported(request)).toBe(true);
     });
 
-    test('returns true when x-compression contains br but file extension is unsupported', () => {
+    test('returns true when accept-encoding is string, contains br and file extension is supported', () => {
         const request = {
             headers: {
-                'x-compression': [{ value: 'br' }],
+                'accept-encoding': [{ value: 'gzip br deflate' }],
             },
             uri: 'test.js',
         };
         expect(isSupported(request)).toBe(true);
+    });
+
+    test('returns false when accept-encoding contains br but file extension is unsupported', () => {
+        const request = {
+            headers: {
+                'accept-encoding': [{ value: 'br' }],
+            },
+            uri: 'test.jpeg',
+        };
+        expect(isSupported(request)).toBe(false);
     });
 });

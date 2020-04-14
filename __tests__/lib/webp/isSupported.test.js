@@ -1,4 +1,6 @@
-const isSupported = require('../../../lib/webp-url/isSupported');
+// @ts-check
+
+const isSupported = require('../../../lib/webp/isSupported');
 
 describe('webp isSupported', () => {
     beforeEach(() => {
@@ -13,13 +15,6 @@ describe('webp isSupported', () => {
     });
 
     test('returns false when URI is missing', () => {
-        const request = {
-            headers: {},
-        };
-        expect(isSupported(request)).toBe(false);
-    });
-
-    test('returns false for empty request object', () => {
         expect(isSupported({})).toBe(false);
     });
 

@@ -10,17 +10,5 @@ Object {
       "value": "br",
     },
   ],
-  "content-type": Array [
-    Object {
-      "key": "Content-Type",
-      "value": "text/html",
-    },
-  ],
-  "x-orig-size": Array [
-    Object {
-      "key": "X-Orig-Size",
-      "value": "0",
-    },
-  ],
 }
 `;

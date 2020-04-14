@@ -1,14 +1,13 @@
 'use strict';
 
-const logger = require('./lib/logger');
+const isSupported = require('./lib/isSupported');
 
+const fetch = require('./lib/fetch/middleware');
 const brotli = require('./lib/brotli/middleware');
 const gzip = require('./lib/gzip/middleware');
 const imagemin = require('./lib/imagemin/middleware');
-const webpAccept = require('./lib/webp-accept/middleware');
-const webpUrl = require('./lib/webp-url/middleware');
-
-const middleware = [gzip, brotli, webpAccept, webpUrl, imagemin];
+const webp = require('./lib/webp/middleware');
+const limitSize = require('./lib/limitSize/middleware');
 
 /**
  * Origin Request CloudFront event handler.
@@ -16,24 +15,20 @@ const middleware = [gzip, brotli, webpAccept, webpUrl, imagemin];
 exports.handler = async (event, context, callback) => {
     const request = event.Records[0].cf.request;
 
-    let response = null;
-
-    try {
-        for (let i = 0; i < middleware.length; i++) {
-            const middlewareResponse = await middleware[i](request, response);
-            if (middlewareResponse) {
-                response = middlewareResponse;
-            }
-        }
-    } catch (error) {
-        logger.error(error);
-        response = null;
+    if (!isSupported(request)) {
+        callback(null, request);
     }
 
-    // Bypass lambda if no response was generated or error occurred.
-    if (response === null) {
-        response = request;
-    }
-
-    callback(null, response);
+    return fetch({ request })
+        .then(webp)
+        .then(imagemin)
+        .then(brotli)
+        .then(gzip)
+        .then(limitSize)
+        .then(({ response }) => {
+            callback(null, response);
+        })
+        .catch(() => {
+            callback(null, request);
+        });
 };

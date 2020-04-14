@@ -1,22 +1,26 @@
+// @ts-check
+
+const nock = require('nock');
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 const readFileAsync = promisify(fs.readFile);
 
-describe('imagemin middleware', () => {
+describe('webp middleware', () => {
     beforeEach(() => {
         jest.resetModules();
+        nock.cleanAll();
     });
 
-    test('does not modify request object when image extension is unsupported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+    test('does not change request when WebP is not supported', async () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => false);
         });
 
         const request = Object.freeze({});
         const response = {};
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/brotli/middleware');
 
         expect(middleware({ request, response })).resolves.toEqual({
             request,
@@ -24,15 +28,15 @@ describe('imagemin middleware', () => {
         });
     });
 
-    test('does not modify response object when image extension is unsupported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+    test('does not change response when WebP is not supported', async () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => false);
         });
 
         const request = {};
         const response = Object.freeze({});
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/brotli/middleware');
 
         expect(middleware({ request, response })).resolves.toEqual({
             request,
@@ -40,11 +44,11 @@ describe('imagemin middleware', () => {
         });
     });
 
-    test('sets response body when file extension is supported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+    test('returns object response when file extension is supported', async () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/imagemin/compress', () => {
+        jest.mock('../../../lib/webp/compress', () => {
             return jest.fn(input => input);
         });
 
@@ -52,20 +56,20 @@ describe('imagemin middleware', () => {
             path.resolve(__dirname, './image-jpg.jpg')
         );
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/webp/middleware');
         const { response } = await middleware({
             request: {},
             response: { body },
         });
 
-        expect(response.body.length).toBeTruthy();
+        expect(response.body.length).toBeGreaterThan(0);
     });
 
-    test('sets response body encoding when file extension is supported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+    test('sets proper Content-Type header', async () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/imagemin/compress', () => {
+        jest.mock('../../../lib/webp/compress', () => {
             return jest.fn(input => input);
         });
 
@@ -73,28 +77,30 @@ describe('imagemin middleware', () => {
             path.resolve(__dirname, './image-jpg.jpg')
         );
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/webp/middleware');
         const { response } = await middleware({
             request: {},
             response: { body },
         });
 
-        expect(response.bodyEncoding).toBe('base64');
+        expect(response.headers).toEqual({
+            'content-type': [{ key: 'Content-Type', value: 'image/webp' }],
+        });
     });
 
     test('response body matches snapshot when supported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/imagemin/compress', () => {
+        jest.mock('../../../lib/webp/compress', () => {
             return jest.fn(input => input);
         });
 
         const body = await readFileAsync(
-            path.resolve(__dirname, './image-png.png')
+            path.resolve(__dirname, './image-jpg.jpg')
         );
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/webp/middleware');
         const { response } = await middleware({
             request: {},
             response: { body },
@@ -104,51 +110,37 @@ describe('imagemin middleware', () => {
     });
 
     test('response headers match snapshot when supported', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/imagemin/compress', () => {
+        jest.mock('../../../lib/webp/compress', () => {
             return jest.fn(input => input);
         });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(
-                () => 'http://example.com/response-headers-snapshot'
-            );
-        });
+
         const body = await readFileAsync(
-            path.resolve(__dirname, './image-png.png')
+            path.resolve(__dirname, './image-jpg.jpg')
         );
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/webp/middleware');
         const { response } = await middleware({
             request: {},
-            response: {
-                headers: {
-                    'content-type': [
-                        {
-                            key: 'Content-Type',
-                            value: 'image/png',
-                        },
-                    ],
-                },
-                body,
-            },
+            response: { body },
         });
 
         expect(response.headers).toMatchSnapshot();
     });
 
     test('rejects promise when compression errors', async () => {
-        jest.mock('../../../lib/imagemin/isSupported', () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
             return jest.fn(() => true);
         });
-        jest.mock('../../../lib/imagemin/compress', () => {
+        jest.mock('../../../lib/webp/compress', () => {
             return jest.fn(() => {
                 throw new Error();
             });
         });
 
-        const middleware = require('../../../lib/imagemin/middleware');
+        const middleware = require('../../../lib/webp/middleware');
 
         expect(
             middleware({ request: {}, response: { body: '' } })

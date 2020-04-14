@@ -1,11 +1,10 @@
-const isSupported = require('../../../lib/imagemin/isSupported');
-
 describe('imagemin isSupported', () => {
     beforeEach(() => {
         jest.resetModules();
     });
 
     test('returns false when file extension is not supported', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.js',
         };
@@ -13,10 +12,12 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns false for empty response', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         expect(isSupported({})).toBe(false);
     });
 
     test('returns true for png files', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.png',
         };
@@ -24,6 +25,7 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns true for jpg files', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.jpg',
         };
@@ -31,6 +33,7 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns true for jpeg files', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.jpeg',
         };
@@ -38,6 +41,7 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns true for gif files', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.gif',
         };
@@ -45,6 +49,19 @@ describe('imagemin isSupported', () => {
     });
 
     test('returns false for svg files', () => {
+        const isSupported = require('../../../lib/imagemin/isSupported');
+        const request = {
+            uri: 'test.svg',
+        };
+        expect(isSupported(request)).toBe(false);
+    });
+
+    test('returns false when WebP is supported', () => {
+        jest.mock('../../../lib/webp/isSupported', () => {
+            return jest.fn(() => true);
+        });
+
+        const isSupported = require('../../../lib/imagemin/isSupported');
         const request = {
             uri: 'test.svg',
         };

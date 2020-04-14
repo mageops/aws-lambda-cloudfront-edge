@@ -101,6 +101,17 @@ describe('response', () => {
             });
         });
 
+        test('allows content-type headers', () => {
+            expect(headersToLambda({ 'content-type': 'text/html' })).toEqual({
+                'content-type': [
+                    {
+                        key: 'Content-Type',
+                        value: 'text/html',
+                    },
+                ],
+            });
+        });
+
         test('allows caching headers', () => {
             expect(
                 headersToLambda({ 'cache-control': 'max-age=31536000' })

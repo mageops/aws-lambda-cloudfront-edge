@@ -1,152 +1,59 @@
-const nock = require('nock');
+// @ts-check
 
 describe('gzip middleware', () => {
     beforeEach(() => {
         jest.resetModules();
-        nock.cleanAll();
     });
 
-    test('returns null response when gzip is unsupported', async () => {
+    test('does not change request when gzip is not supported', async () => {
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
-        jest.mock('../../../lib/brotli/isSupported', () => {
+
+        const request = Object.freeze({});
+        const response = {};
+
+        const middleware = require('../../../lib/gzip/middleware');
+
+        expect(middleware({ request, response })).resolves.toEqual({
+            request,
+            response,
+        });
+    });
+
+    test('does not change response when gzip is not supported', async () => {
+        jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => false);
         });
 
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({});
+        const request = {};
+        const response = Object.freeze({});
 
-        expect(response).toEqual(null);
+        const middleware = require('../../../lib/gzip/middleware');
+
+        expect(middleware({ request, response })).resolves.toEqual({
+            request,
+            response,
+        });
     });
 
-    test('returns object response when gzip is supported', async () => {
+    test('adds Content-Encoding header when gzip is supported', async () => {
         jest.mock('../../../lib/gzip/isSupported', () => {
             return jest.fn(() => true);
         });
         jest.mock('../../../lib/gzip/compress', () => {
             return jest.fn(input => global.Buffer.from(input));
         });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/response-gzip-supported');
-        });
-        nock('http://example.com')
-            .get('/response-gzip-supported')
-            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, { headers: {} });
-
-        expect(Object.keys(response).length).toBeGreaterThan(0);
-    });
-
-    test('does not modify request object when gzip is unsupported', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => false);
+        const { response } = await middleware({
+            request: {},
+            response: { body: '' },
         });
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => false);
-        });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const request = {};
-        await middleware(request, {});
-
-        expect(request).toEqual({});
-    });
-
-    test('does not modify request object when both gzip and brotli are supported', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => true);
-        });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const request = {};
-        await middleware(request, {});
-
-        expect(request).toEqual({});
-    });
-
-    test('does not modify response object when both gzip and brotli supported', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => true);
-        });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = {};
-        await middleware(response, {});
-
-        expect(response).toEqual({});
-    });
-
-    test('does not modify response object when gzip is unsupported', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => false);
-        });
-        jest.mock('../../../lib/brotli/isSupported', () => {
-            return jest.fn(() => false);
-        });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = {};
-
-        await middleware({}, response);
-        expect(response).toEqual({});
-    });
-
-    test('sets proper content-encoding header', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => global.Buffer.from(input));
-        });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/content-encoding');
-        });
-        nock('http://example.com')
-            .get('/content-encoding')
-            .reply(200, '', { 'content-type': 'text/html' });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, { headers: {} });
 
         expect(response.headers).toEqual({
             'content-encoding': [{ key: 'Content-Encoding', value: 'gzip' }],
-            'content-type': [{ key: 'Content-Type', value: 'text/html' }],
-            'x-orig-size': [
-                {
-                    key: 'X-Orig-Size',
-                    value: '0',
-                },
-            ],
         });
-    });
-
-    test('returns response for null argument', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => global.Buffer.from(input));
-        });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/null-parameter');
-        });
-        nock('http://example.com')
-            .get('/null-parameter')
-            .reply(200, '', { 'content-type': 'text/html' });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, null);
-
-        expect(response).not.toEqual(null);
     });
 
     test('response body matches snapshot when supported', async () => {
@@ -156,15 +63,12 @@ describe('gzip middleware', () => {
         jest.mock('../../../lib/gzip/compress', () => {
             return jest.fn(input => global.Buffer.from(input));
         });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/response-body-snapshot');
-        });
-        nock('http://example.com')
-            .get('/response-body-snapshot')
-            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, { headers: {} });
+        const { response } = await middleware({
+            request: {},
+            response: { body: '' },
+        });
 
         expect(response.body).toMatchSnapshot();
     });
@@ -176,36 +80,14 @@ describe('gzip middleware', () => {
         jest.mock('../../../lib/gzip/compress', () => {
             return jest.fn(input => global.Buffer.from(input));
         });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(
-                () => 'http://example.com/response-headers-snapshot'
-            );
-        });
-        nock('http://example.com')
-            .get('/response-headers-snapshot')
-            .reply(200, '', { 'content-type': 'text/html' });
 
         const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, { headers: {} });
+        const { response } = await middleware({
+            request: {},
+            response: { body: '' },
+        });
 
         expect(response.headers).toMatchSnapshot();
-    });
-
-    test('rejects promise when server errors', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/server-error');
-        });
-
-        nock('http://example.com')
-            .get('/server-error')
-            .reply(503, '');
-
-        const middleware = require('../../../lib/gzip/middleware');
-
-        expect(middleware({}, { headers: {} })).rejects.toThrow();
     });
 
     test('rejects promise when compression errors', async () => {
@@ -217,39 +99,9 @@ describe('gzip middleware', () => {
                 throw new Error();
             });
         });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/compression-error');
-        });
-
-        nock('http://example.com')
-            .get('/compression-error')
-            .reply(200, '', { 'content-type': 'image/png' });
 
         const middleware = require('../../../lib/gzip/middleware');
 
-        expect(middleware({}, { headers: {} })).rejects.toThrow();
-    });
-
-    test('forwards origin response headers when supported', async () => {
-        jest.mock('../../../lib/gzip/isSupported', () => {
-            return jest.fn(() => true);
-        });
-        jest.mock('../../../lib/gzip/compress', () => {
-            return jest.fn(input => global.Buffer.from(input));
-        });
-        jest.mock('../../../lib/getOriginUrl', () => {
-            return jest.fn(() => 'http://example.com/response-headers-forward');
-        });
-        nock('http://example.com')
-            .get('/response-headers-forward')
-            .reply(200, '', {
-                'content-type': 'text/html',
-                'access-control-allow-origin': '*',
-            });
-
-        const middleware = require('../../../lib/gzip/middleware');
-        const response = await middleware({}, { headers: {} });
-
-        expect(response.headers['access-control-allow-origin']).toBeTruthy();
+        expect(middleware({ request: {}, response: {} })).rejects.toThrow();
     });
 });

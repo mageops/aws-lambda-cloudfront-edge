@@ -17,23 +17,16 @@ describe('gzip compress', () => {
     });
 
     test('rejects the promise when gzip errors', async () => {
-        jest.mock('zlib', () => {
-            return {
-                gzip: jest.fn((input, options, callback) =>
-                    callback(new Error('Error'))
-                ),
-            };
-        });
-
         const compress = require('../../../lib/gzip/compress');
 
-        expect(compress('')).rejects.toThrow('Error');
+        expect(compress(-1)).rejects.toThrow();
     });
 
     test('result output is smaller then input', async () => {
         const compress = require('../../../lib/gzip/compress');
-        const input = 'test input to compress';
-        const output = await compress(input).toString();
+        const input =
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+        const output = (await compress(input)).toString();
 
         expect(output.length).toBeLessThan(input.length);
     });

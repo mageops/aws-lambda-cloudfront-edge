@@ -76,4 +76,52 @@ describe('getOriginUrl', () => {
             'https://www.example.com/example/example.jpeg'
         );
     });
+
+    test('cuts WebP from URL for JPEG', () => {
+        const request = {
+            origin: {
+                custom: {
+                    protocol: 'https',
+                    domainName: 'www.example.com',
+                    path: '/example',
+                },
+            },
+            uri: '/example.jpeg.webp',
+        };
+        expect(getOriginUrl(request)).toBe(
+            'https://www.example.com/example/example.jpeg'
+        );
+    });
+
+    test('cuts WebP from URL for JPG', () => {
+        const request = {
+            origin: {
+                custom: {
+                    protocol: 'https',
+                    domainName: 'www.example.com',
+                    path: '/example',
+                },
+            },
+            uri: '/example.jpeg.webp',
+        };
+        expect(getOriginUrl(request)).toBe(
+            'https://www.example.com/example/example.jpeg'
+        );
+    });
+
+    test('cuts WebP from URL for PNG', () => {
+        const request = {
+            origin: {
+                custom: {
+                    protocol: 'https',
+                    domainName: 'www.example.com',
+                    path: '/example',
+                },
+            },
+            uri: '/example.jpeg.webp',
+        };
+        expect(getOriginUrl(request)).toBe(
+            'https://www.example.com/example/example.jpeg'
+        );
+    });
 });

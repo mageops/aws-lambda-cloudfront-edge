@@ -100,10 +100,10 @@ describe('origin-request handler', () => {
                     cf: {
                         request: {
                             headers: {
-                                'x-compression': [
+                                'accept-encoding': [
                                     {
                                         value: 'br',
-                                        key: 'X-Compression',
+                                        key: 'Accept-Encoding',
                                     },
                                 ],
                             },
@@ -150,15 +150,13 @@ describe('origin-request handler', () => {
                     cf: {
                         request: {
                             headers: {
-                                'x-compression': [
-                                    {
-                                        value: 'br',
-                                        key: 'X-Compression',
-                                    },
-                                ],
                                 'accept-encoding': [
                                     {
                                         value: 'gzip',
+                                        key: 'Accept-Encoding',
+                                    },
+                                    {
+                                        value: 'br',
                                         key: 'Accept-Encoding',
                                     },
                                 ],
