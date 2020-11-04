@@ -14,7 +14,9 @@ describe('imagemin compress', () => {
         );
         const compress = require('../../../lib/imagemin/compress');
 
-        expect(typeof compress(input).then).toBe('function');
+        const result = compress(input);
+        expect(typeof result.then).toBe('function');
+        await result;
     });
 
     test('resolves a promise with Buffer object', async () => {

@@ -5,8 +5,10 @@ describe('brotli compress', () => {
         jest.resetModules();
     });
 
-    test('returns a promise', () => {
-        expect(typeof compress('').then).toBe('function');
+    test('returns a promise', async () => {
+        const result = compress('');
+        expect(typeof result.then).toBe('function');
+        await result;
     });
 
     test('resolves a promise with Buffer object', async () => {
@@ -17,7 +19,7 @@ describe('brotli compress', () => {
 
     test('result output is smaller then input', async () => {
         const input = 'test input to compress';
-        const output = await compress(input).toString();
+        const output = (await compress(input)).toString();
 
         expect(output.length).toBeLessThan(input.length);
     });

@@ -11,7 +11,8 @@
     "scripts": {
         "create-package": "docker run --rm -v \"$PWD\":/var/app mageops/aws-lambda-build nodejs-yarn edge-lambda-deploy-package",
         "precommit": "lint-staged",
-        "test": "jest"
+        "test": "jest",
+        "test-docker": "docker buildx build --pull -f docker/test-node10.Dockerfile ."
     },
     "devDependencies": {
         "eslint": "^6.8.0",

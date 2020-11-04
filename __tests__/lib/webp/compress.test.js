@@ -16,7 +16,9 @@ describe('webp compress', () => {
         );
         const compress = require('../../../lib/webp/compress');
 
-        expect(typeof compress(input).then).toBe('function');
+        const result = compress(input);
+        expect(typeof result.then).toBe('function');
+        await result;
     });
 
     test('resolves a promise with Buffer object', async () => {

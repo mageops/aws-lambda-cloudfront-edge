@@ -3,10 +3,12 @@ describe('gzip compress', () => {
         jest.resetModules();
     });
 
-    test('returns a promise', () => {
+    test('returns a promise', async () => {
         const compress = require('../../../lib/gzip/compress');
 
-        expect(typeof compress('').then).toBe('function');
+        const result = compress('');
+        expect(typeof result.then).toBe('function');
+        await result;
     });
 
     test('resolves a promise with Buffer object', async () => {
