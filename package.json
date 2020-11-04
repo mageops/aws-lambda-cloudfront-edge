@@ -19,9 +19,10 @@
         "eslint-plugin-node": "^11.0.0",
         "eslint-plugin-prettier": "^3.1.2",
         "husky": "^4.2.1",
-        "jest": "^25.1.0",
+        "jest": "^26.6.3",
+        "jest-plugin-must-assert": "^2.0.0",
         "lint-staged": "^10.0.3",
-        "nock": "^12.0.3",
+        "nock": "^13.0.4",
         "prettier": "^2.0.4"
     },
     "lint-staged": {
@@ -63,6 +64,13 @@
                 "experimentalObjectRestSpread": true
             }
         }
+    },
+    "jest": {
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            ".history"
+        ],
+        "setupFilesAfterEnv": ["jest-plugin-must-assert"]
     },
     "dependencies": {
         "@types/jest": "^25.2.1",

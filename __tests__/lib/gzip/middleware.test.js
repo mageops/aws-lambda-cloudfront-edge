@@ -15,7 +15,7 @@ describe('gzip middleware', () => {
 
         const middleware = require('../../../lib/gzip/middleware');
 
-        expect(middleware({ request, response })).resolves.toEqual({
+        await expect(middleware({ request, response })).resolves.toEqual({
             request,
             response,
         });
@@ -31,7 +31,7 @@ describe('gzip middleware', () => {
 
         const middleware = require('../../../lib/gzip/middleware');
 
-        expect(middleware({ request, response })).resolves.toEqual({
+        await expect(middleware({ request, response })).resolves.toEqual({
             request,
             response,
         });
@@ -96,12 +96,12 @@ describe('gzip middleware', () => {
         });
         jest.mock('../../../lib/gzip/compress', () => {
             return jest.fn(() => {
-                throw new Error();
+                throw new Error('Expected error message');
             });
         });
 
         const middleware = require('../../../lib/gzip/middleware');
 
-        expect(middleware({ request: {}, response: {} })).rejects.toThrow();
+        await expect(middleware({ request: {}, response: {} })).rejects.toThrow('Expected error message');
     });
 });

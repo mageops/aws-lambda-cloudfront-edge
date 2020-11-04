@@ -13,7 +13,7 @@ describe('brotli middleware', () => {
 
         const middleware = require('../../../lib/brotli/middleware');
 
-        expect(middleware({ request, response })).resolves.toEqual({
+        await expect(middleware({ request, response })).resolves.toEqual({
             request,
             response,
         });
@@ -29,7 +29,7 @@ describe('brotli middleware', () => {
 
         const middleware = require('../../../lib/brotli/middleware');
 
-        expect(middleware({ request, response })).resolves.toEqual({
+        await expect(middleware({ request, response })).resolves.toEqual({
             request,
             response,
         });
@@ -95,14 +95,14 @@ describe('brotli middleware', () => {
         });
         jest.mock('../../../lib/brotli/compress', () => {
             return jest.fn(() => {
-                throw new Error();
+                throw new Error('Expected error message');
             });
         });
 
         const middleware = require('../../../lib/brotli/middleware');
 
-        expect(
+        await expect(
             middleware({ request: {}, response: { body: '' } })
-        ).rejects.toThrow();
+        ).rejects.toThrow('Expected error message');
     });
 });

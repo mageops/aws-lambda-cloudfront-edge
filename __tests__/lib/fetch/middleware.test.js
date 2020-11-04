@@ -12,12 +12,14 @@ describe('fetch middleware', () => {
         });
 
         nock('http://example.com')
+            .persist()
+            .replyContentLength()
             .get('/server-error')
             .reply(503, '');
 
         const middleware = require('../../../lib/fetch/middleware');
 
-        expect(middleware({}, { headers: {} })).rejects.toThrow();
+        await expect(middleware({}, { headers: {} })).rejects.toThrow('Response code 503');
     });
 
     test('rejects promise when resource is not found', async () => {
@@ -26,12 +28,14 @@ describe('fetch middleware', () => {
         });
 
         nock('http://example.com')
+            .persist()
+            .replyContentLength()
             .get('/not-found')
             .reply(404, '');
 
         const middleware = require('../../../lib/fetch/middleware');
 
-        expect(middleware({}, { headers: {} })).rejects.toThrow();
+        await expect(middleware({}, { headers: {} })).rejects.toThrow('Response code 404');
     });
 
     test('fills response object with origin response headers', async () => {
@@ -41,7 +45,7 @@ describe('fetch middleware', () => {
 
         nock('http://example.com')
             .get('/origin-response-headers')
-            .reply(200, '', { 'content-type': 'text/html' });
+            .reply(200, '', { 'content-type': 'text/html', 'content-length': 0 });
 
         const middleware = require('../../../lib/fetch/middleware');
         const { response } = await middleware({
@@ -59,7 +63,7 @@ describe('fetch middleware', () => {
 
         nock('http://example.com')
             .get('/origin-response-headers')
-            .reply(200, '', { 'content-type': 'text/html' });
+            .reply(200, '', { 'content-type': 'text/html', 'content-length': '0' });
 
         const middleware = require('../../../lib/fetch/middleware');
         const { response } = await middleware({
@@ -79,7 +83,7 @@ describe('fetch middleware', () => {
 
         nock('http://example.com')
             .get('/origin-response-headers')
-            .reply(200, body, { 'content-type': 'text/html' });
+            .reply(200, body, { 'content-type': 'text/html', 'content-length': body.length.toString() });
 
         const middleware = require('../../../lib/fetch/middleware');
         const { response } = await middleware({
@@ -100,7 +104,7 @@ describe('fetch middleware', () => {
             .reply(function(uri, requestBody, cb) {
                 expect(this.req.headers['accept-encoding']).toBe('text/html');
 
-                cb(null, [200, '', {}]);
+                cb(null, [200, '', {'content-length': '0'}]);
             });
 
         const middleware = require('../../../lib/fetch/middleware');
@@ -128,7 +132,7 @@ describe('fetch middleware', () => {
             .reply(function(uri, requestBody, cb) {
                 expect(this.req.headers['host']).toBe('example.com');
 
-                cb(null, [200, '', {}]);
+                cb(null, [200, '', {'content-length': '0'}]);
             });
 
         const middleware = require('../../../lib/fetch/middleware');

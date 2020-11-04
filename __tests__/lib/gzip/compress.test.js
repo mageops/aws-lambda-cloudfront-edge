@@ -19,7 +19,7 @@ describe('gzip compress', () => {
     test('rejects the promise when gzip errors', async () => {
         const compress = require('../../../lib/gzip/compress');
 
-        expect(compress(-1)).rejects.toThrow();
+        await expect(compress(-1)).rejects.toThrow('Received type number');
     });
 
     test('result output is smaller then input', async () => {

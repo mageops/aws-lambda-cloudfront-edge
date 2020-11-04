@@ -41,14 +41,14 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/gzip-supported.js')
-            .reply(200, '', { 'content-type': 'text/javascript' });
+            .reply(200, '', { 'content-type': 'text/javascript', 'content-length': '0' });
 
         const callback = jest.fn();
 
         await originRequest.handler(event, null, callback);
 
         expect(callback).toHaveBeenCalledWith(null, {
-            body: 'H4sIAAAAAAACEwMAAAAAAAAAAAA=',
+            body: 'H4sIAAAAAAACAwMAAAAAAAAAAAA=',
             bodyEncoding: 'base64',
             headers: {
                 'content-encoding': [
@@ -122,7 +122,7 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/brotli-supported.js')
-            .reply(200, '', { 'content-type': 'text/javascript' });
+            .reply(200, '', { 'content-type': 'text/javascript', 'content-length': '0' });
 
         const callback = jest.fn();
 
@@ -176,7 +176,7 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/brotli-gzip-supported.js')
-            .reply(200, '', { 'content-type': 'text/javascript' });
+            .reply(200, '', { 'content-type': 'text/javascript', 'content-length': '0' });
 
         const callback = jest.fn();
 
@@ -228,7 +228,7 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/not-found.js')
-            .reply(404, '', { 'content-type': 'text/javascript' });
+            .reply(404, '', { 'content-type': 'text/javascript', 'content-length': '0' });
 
         const callback = jest.fn();
 
@@ -268,7 +268,7 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/server-error.js')
-            .reply(503, '', { 'content-type': 'text/javascript' });
+            .reply(503, '', { 'content-type': 'text/javascript', 'content-length': '0' });
 
         const callback = jest.fn();
 
