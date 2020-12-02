@@ -10,5 +10,11 @@ Object {
       "value": "gzip",
     },
   ],
+  "content-length": Array [
+    Object {
+      "key": "Content-Length",
+      "value": "0",
+    },
+  ],
 }
 `;

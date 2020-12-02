@@ -52,6 +52,7 @@ describe('gzip middleware', () => {
         });
 
         expect(response.headers).toEqual({
+            'content-length': [{ key: 'Content-Length', value: '0' }],
             'content-encoding': [{ key: 'Content-Encoding', value: 'gzip' }],
         });
     });

@@ -41,23 +41,26 @@ describe('origin-request handler', () => {
         };
         nock('http://example.com')
             .get('/gzip-supported.js')
-            .reply(200, '', { 'content-type': 'text/javascript', 'content-length': '0' });
+            .reply(200, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', { 'content-type': 'text/javascript', 'content-length': '30' });
 
         const callback = jest.fn();
 
         await originRequest.handler(event, null, callback);
 
         expect(callback).toHaveBeenCalledWith(null, {
-            body: 'H4sIAAAAAAACAwMAAAAAAAAAAAA=',
+            body: 'H4sIAAAAAAACA3N0xAcAG2p/MR4AAAA=',
             bodyEncoding: 'base64',
             headers: {
+                'content-length': [
+                    { key: 'Content-Length', value: '23' },
+                ],
                 'content-encoding': [
                     { key: 'Content-Encoding', value: 'gzip' },
                 ],
                 'content-type': [
                     { key: 'Content-Type', value: 'text/javascript' },
                 ],
-                'x-orig-size': [{ key: 'X-Orig-Size', value: '0' }],
+                'x-orig-size': [{ key: 'X-Orig-Size', value: '30' }],
             },
             status: 200,
             statusDescription: 'OK',

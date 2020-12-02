@@ -84,6 +84,7 @@ describe('webp middleware', () => {
         });
 
         expect(response.headers).toEqual({
+            'content-length': [{ key: 'Content-Length', value: '154016' }],
             'content-type': [{ key: 'Content-Type', value: 'image/webp' }],
         });
     });
