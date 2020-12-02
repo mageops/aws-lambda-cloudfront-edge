@@ -1,6 +1,6 @@
 {
     "name": "creativeshop-lambda",
-    "version": "0.2.0",
+    "version": "1.6.0",
     "description": "Lambda used for creativeshop.",
     "main": "index.js",
     "author": "creativestyle",
