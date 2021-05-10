@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge.svg?branch=master)](https://travis-ci.com/mageops/aws-lambda-cloudfront-edge)
 
+# Do not use it
+
+This Lambda is broken by design. Please do not use it. We will improve this concept one day.
+
 # Lambda@Edge for creativeshop
 
 ## Requirements
