@@ -75,7 +75,7 @@
     },
     "dependencies": {
         "@types/jest": "^25.2.1",
-        "got": "^10.3.0",
+        "got": "^11.8.5",
         "gzip-size": "^5.1.1",
         "imagemin": "^7.0.1",
         "imagemin-gifsicle": "^7.0.0",
