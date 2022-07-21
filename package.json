@@ -84,6 +84,6 @@
         "imagemin-webp": "^5.1.0",
         "lodash.capitalize": "^4.2.1",
         "pretty-size": "^2.0.0",
-        "terser": "^4.6.11"
+        "terser": "^4.8.1"
     }
 }
